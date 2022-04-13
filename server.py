@@ -29,11 +29,11 @@ async def transcribe(audios: List[UploadFile] = File(...)):
     Predict audio POST from front-end server using `form-data` files
     NOTE: note that this might bug if > 1 requests are sent with the same file name
     """
-    print("XXX",audios)
     # save files
     audio_paths = []
     for audio in audios:
         if not os.path.exists('tmp'):
+            print("XXX",audios)
             os.makedirs('tmp')
         # save tmp audio file
         tmp_name = f'tmp/{audio.filename}.tmp'
