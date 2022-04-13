@@ -101,6 +101,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
+            print("YYY", os.path.exists(tmp_name))
 
         # convert to mono, 16k sampling rate
         result = subprocess.run(
