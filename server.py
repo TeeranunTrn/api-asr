@@ -95,7 +95,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
         print("XXX",audio)
-        print("XXX",os.path.exists(tmp_name))
+        print("XXX",tmp_name)
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
