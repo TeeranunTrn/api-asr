@@ -45,6 +45,7 @@ class VoskTranscriber:
         """
         print("ZZZ",wav_path)
         wf: Any = wave.open(wav_path, "rb")
+        print("ZZZ",wf)
 
         # check file eligibility
         if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
@@ -95,7 +96,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
         print("XXX",audio)
-        print("XXX",tmp_name)
+        print("XXX",os.path.exists(tmp_name))
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
