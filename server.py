@@ -117,6 +117,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         audio_paths.append(save_name)
         os.path.exists(save_name)
         print("YYY-result",result)
+        print("YYY-path",os.path.exists(save_name))
 
     # inference
     result = {
