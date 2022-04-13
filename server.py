@@ -102,7 +102,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
             content = await audio.read()
             await f.write(content)
             print("YYY", os.path.exists(tmp_name))
-            print("YYY-C", content)
+            print("YYY", os.path.exists(save_name))
 
         # convert to mono, 16k sampling rate
         result = subprocess.run(
@@ -119,6 +119,8 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         audio_paths.append(save_name)
         os.path.exists(save_name)
         print("YYY-result",result)
+        print("RRR",result.stdout)
+        print("RRR",result.stderr)
         print("YYY-path",os.path.exists(tmp_name))
         print("YYY-path",os.path.exists(save_name))
 
