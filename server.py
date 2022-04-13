@@ -29,6 +29,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
     Predict audio POST from front-end server using `form-data` files
     NOTE: note that this might bug if > 1 requests are sent with the same file name
     """
+    print("XXX",audios)
     # save files
     audio_paths = []
     for audio in audios:
@@ -64,3 +65,6 @@ async def transcribe(audios: List[UploadFile] = File(...)):
 
     clear_audio(audio_paths)
     return result, 200
+
+if __name__ == "__main__":
+    uvicorn.run(app, debug=True)
