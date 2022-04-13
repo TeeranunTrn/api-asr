@@ -17,22 +17,8 @@ from vosk import Model, KaldiRecognizer, SetLogLevel
 SetLogLevel(0)
 
 class VoskTranscriber:
-    """
-    Vosk Transcriber
-    Vosk wrapper to do transcription or instantiating server
-    Attributes
-    ----------
-    model_path: str
-        Path to loaded model
-    model: vosk.Model
-        Vosk model loaded from Kaldi file
-    """
+
     def __init__(self, model_path: str) -> None:
-        """
-        Constructor of VoskTranscriver
-        model_path: str
-            Path for Kaldi model to read. Model must be properly formatted. (See example in github release)
-        """
         self.model_path: str = model_path
         # sanity check model path
         if not os.path.exists(model_path):
@@ -40,12 +26,7 @@ class VoskTranscriber:
         self.model: Model = Model(model_path)
 
     def transcribe(self, wav_path: str) -> Dict[str, Any]:
-        """
-        Transcribe audio given a path
-        """
-        print("ZZZ-path",os.path.exists(wav_path), wav_path)
         wf: Any = wave.open(wav_path, "rb")
-        print("ZZZ-wf",wf)
 
         # check file eligibility
         if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
@@ -83,10 +64,6 @@ async def healthcheck():
 
 @app.post("/transcribe")
 async def transcribe(audios: List[UploadFile] = File(...)):
-    """
-    Predict audio POST from front-end server using `form-data` files
-    NOTE: note that this might bug if > 1 requests are sent with the same file name
-    """
     # save files
     audio_paths = []
     for audio in audios:
@@ -95,25 +72,16 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         # save tmp audio file
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
-        print("XXX-dir",os.path.exists('tmp'))
-        print("XXX-path",os.path.exists(tmp_name))
-        print("XXX-path",os.path.exists(save_name))
+
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
-            print("YYY", os.path.exists(tmp_name))
-            print("YYY", os.path.exists(save_name))
 
         # convert to mono, 16k sampling rate
         cmd = ['ffmpeg', '-i', tmp_name, '-ac', '1', '-ar', '16000', save_name]
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         audio_paths.append(save_name)
         os.path.exists(save_name)
-        print("YYY-result",result)
-        print("RRR",result.stdout)
-        print("RRR",result.stderr)
-        print("YYY-path",os.path.exists(tmp_name))
-        print("YYY-path",os.path.exists(save_name))
 
     # inference
     result = {
