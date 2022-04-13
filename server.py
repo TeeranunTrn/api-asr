@@ -43,7 +43,7 @@ class VoskTranscriber:
         """
         Transcribe audio given a path
         """
-        print("ZZZ",wav_path)
+        print("ZZZ",os.path.exists(wav_path))
         wf: Any = wave.open(wav_path, "rb")
         print("ZZZ",wf)
 
