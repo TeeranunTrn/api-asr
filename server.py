@@ -106,14 +106,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
 
         # convert to mono, 16k sampling rate
         result = subprocess.run(
-            [
-                'ffmpeg',
-                '-ac', '1',
-                '-ar', '16000',
-                '-i',
-                tmp_name,
-                save_name
-            ],
+            ['ffmpeg', '-ac 1', '-ar 16000', '-i', tmp_name, save_name],
             stdout=subprocess.PIPE, shell=True
         )
         audio_paths.append(save_name)
