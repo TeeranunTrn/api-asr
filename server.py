@@ -1,12 +1,68 @@
+#!/usr/bin/env python3
+
 import os
 import subprocess
-from typing import List
 
 import aiofiles
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
 
-from vosk_transcriber import VoskTranscriber
+import json
+import logging
+import wave
+from typing import Any, Dict, Optional, List
+
+from vosk import Model, KaldiRecognizer, SetLogLevel
+
+SetLogLevel(0)
+
+class VoskTranscriber:
+    """
+    Vosk Transcriber
+    Vosk wrapper to do transcription or instantiating server
+    Attributes
+    ----------
+    model_path: str
+        Path to loaded model
+    model: vosk.Model
+        Vosk model loaded from Kaldi file
+    """
+    def __init__(self, model_path: str) -> None:
+        """
+        Constructor of VoskTranscriver
+        model_path: str
+            Path for Kaldi model to read. Model must be properly formatted. (See example in github release)
+        """
+        self.model_path: str = model_path
+        # sanity check model path
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Cannot find model path: `{model_path}`")
+        self.model: Model = Model(model_path)
+
+    def transcribe(self, wav_path: str) -> Dict[str, Any]:
+        """
+        Transcribe audio given a path
+        """
+        wf: Any = wave.open(wav_path, "rb")
+
+        # check file eligibility
+        if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
+            raise OSError(f"Cannot read wav file: `{wav_path}`. Make sure your audio file is in .wav format and mono channel")
+
+        rec: KaldiRecognizer = KaldiRecognizer(self.model, wf.getframerate())
+        rec.SetWords(True)
+
+        while True:
+            data: Any = wf.readframes(4000)
+            if len(data) == 0:
+                break
+            if rec.AcceptWaveform(data):
+                logging.debug(rec.Result())
+            else:
+                logging.debug(rec.PartialResult())
+
+        return json.loads(rec.FinalResult())
+
 
 app = FastAPI()
 model_path: str = "mymodel"  # change this if neccessary
@@ -37,8 +93,8 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         # save tmp audio file
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
-        print("XXX",os.path.exists(tmp_name))
-        print("XXX",os.path.exists(save_name))
+        print("XXX",audio)
+        #print("XXX",os.path.exists(save_name))
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
@@ -66,6 +122,6 @@ async def transcribe(audios: List[UploadFile] = File(...)):
 
     clear_audio(audio_paths)
     return result, 200
-
+    
 if __name__ == "__main__":
     uvicorn.run(app, debug=True)
