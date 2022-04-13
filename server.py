@@ -43,6 +43,7 @@ class VoskTranscriber:
         """
         Transcribe audio given a path
         """
+        print("ZZZ",wav_path)
         wf: Any = wave.open(wav_path, "rb")
 
         # check file eligibility
@@ -94,7 +95,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
         print("XXX",audio)
-        #print("XXX",os.path.exists(save_name))
+        print("XXX",os.path.exists(tmp_name))
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
