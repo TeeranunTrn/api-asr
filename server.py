@@ -33,8 +33,8 @@ async def transcribe(audios: List[UploadFile] = File(...)):
     audio_paths = []
     for audio in audios:
         if not os.path.exists('tmp'):
-            print("XXX",audios)
             os.makedirs('tmp')
+        print("XXX",os.path.exists('tmp'))
         # save tmp audio file
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
