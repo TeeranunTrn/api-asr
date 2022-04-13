@@ -95,13 +95,14 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         # save tmp audio file
         tmp_name = f'tmp/{audio.filename}.tmp'
         save_name = f'tmp/{audio.filename}'.replace('.mp3', '.wav')
-        print("XXX-audio",audio)
+        print("XXX-dir",os.path.exists('tmp'))
         print("XXX-path",os.path.exists(tmp_name))
-        print("XXX-name",tmp_name, " AND ", save_name)
+        print("XXX-path",os.path.exists(save_name))
         async with aiofiles.open(tmp_name, "wb") as f:
             content = await audio.read()
             await f.write(content)
             print("YYY", os.path.exists(tmp_name))
+            print("YYY-C", content)
 
         # convert to mono, 16k sampling rate
         result = subprocess.run(
@@ -118,6 +119,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         audio_paths.append(save_name)
         os.path.exists(save_name)
         print("YYY-result",result)
+        print("YYY-path",os.path.exists(tmp_name))
         print("YYY-path",os.path.exists(save_name))
 
     # inference
