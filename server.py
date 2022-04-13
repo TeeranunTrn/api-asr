@@ -108,10 +108,10 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         result = subprocess.run(
             [
                 'ffmpeg',
-                '-i',
-                tmp_name,
                 '-ac', '1',
                 '-ar', '16000',
+                '-i',
+                tmp_name,
                 save_name
             ],
             stdout=subprocess.PIPE, shell=True
