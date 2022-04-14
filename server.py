@@ -90,7 +90,7 @@ async def transcribe(audios: List[UploadFile] = File(...)):
     }
 
     clear_audio(audio_paths)
-    return result, 200
+    return result[save_name]['text'], 200
     
 if __name__ == "__main__":
     uvicorn.run(app, debug=True)
