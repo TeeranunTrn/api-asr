@@ -88,6 +88,8 @@ async def transcribe(audios: List[UploadFile] = File(...)):
         wav: transcriber.transcribe(wav)
         for wav in audio_paths
     }
+    import time
+    time.sleep(3)
 
     clear_audio(audio_paths)
     return result[save_name]['text'], 200
